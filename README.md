@@ -59,12 +59,11 @@ cloud_computing_workshop/
 │   ├── lambda-cloudfront-policy.json # IAM policy for Lambda
 │   └── with_rating/
 │       └── index.html                # Static site (with rating dropdown)
-├── part2/
-│   ├── demo-part2-steps.md           # Part 2 step-by-step instructions
-│   ├── index.html                    # Static site with API Gateway integration
-│   ├── feedback_api_lambda.py        # Feedback API Lambda function
-│   └── lambda-dynamodb-policy.json   # IAM policy for DynamoDB access
-└── aws-workshop-proposal.md          # Full workshop proposal document
+└── part2/
+    ├── demo-part2-steps.md           # Part 2 step-by-step instructions
+    ├── index.html                    # Static site with API Gateway integration
+    ├── feedback_api_lambda.py        # Feedback API Lambda function
+    └── lambda-dynamodb-policy.json   # IAM policy for DynamoDB access
 ```
 
 ---
