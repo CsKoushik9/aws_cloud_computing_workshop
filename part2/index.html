@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Cloud Computing Workshop</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1b2d; color: #e0e0e0; min-height: 100vh; display: flex; justify-content: center; padding: 40px 20px; }
+        .container { max-width: 600px; width: 100%; }
+        h1 { font-size: 2rem; color: #ff9900; margin-bottom: 4px; }
+        .version { font-size: 1.2rem; color: #888; margin-bottom: 32px; }
+        h2 { font-size: 1.2rem; color: #ff9900; margin-bottom: 12px; }
+        section { background: #1a2740; padding: 24px; border-radius: 8px; margin-bottom: 24px; }
+        input, select, button { display: block; width: 100%; padding: 10px 14px; margin-bottom: 10px; border: 1px solid #334; border-radius: 6px; font-size: 1rem; }
+        input, select { background: #0f1b2d; color: #e0e0e0; }
+        button { background: #ff9900; color: #000; border: none; cursor: pointer; font-weight: 600; }
+        button:hover { background: #e88a00; }
+        #status { margin-top: 8px; font-size: 0.9rem; }
+        .card { background: #0f1b2d; padding: 12px 16px; border-radius: 6px; margin-bottom: 8px; }
+        .card p { margin-top: 4px; color: #aaa; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>☁️ AWS Cloud Computing Workshop</h1>
+        <p class="version">Welcome to the Workshop!</p>
+
+        <section class="feedback-form">
+            <h2>Submit Feedback</h2>
+            <form id="feedbackForm">
+                <input type="text" id="name" placeholder="Your Name" required>
+                <input type="text" id="message" placeholder="Your Message" required>
+                <select id="rating" required>
+                    <option value="" disabled selected>Rate this workshop</option>
+                    <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                    <option value="4">⭐⭐⭐⭐ Good</option>
+                    <option value="3">⭐⭐⭐ Average</option>
+                    <option value="2">⭐⭐ Below Average</option>
+                    <option value="1">⭐ Poor</option>
+                </select>
+                <button type="submit">Submit</button>
+            </form>
+            <p id="status"></p>
+        </section>
+
+        <section class="feedback-list">
+            <h2>All Feedback</h2>
+            <button onclick="loadFeedback()">Load Feedback</button>
+            <div id="feedbackDisplay"></div>
+        </section>
+    </div>
+
+    <script>
+        const API_URL = 'https://fgpietifn6.execute-api.ap-south-2.amazonaws.com/prod';
+
+        document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const message = document.getElementById('message').value;
+            const rating = document.getElementById('rating').value;
+            const id = Date.now().toString();
+
+            try {
+                const res = await fetch(`${API_URL}/feedback`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, name, message, rating })
+                });
+                const data = await res.json();
+                document.getElementById('status').textContent = '✅ Feedback submitted!';
+                document.getElementById('feedbackForm').reset();
+            } catch (err) {
+                document.getElementById('status').textContent = '❌ Error — is the API running?';
+            }
+        });
+
+        async function loadFeedback() {
+            const display = document.getElementById('feedbackDisplay');
+            try {
+                const res = await fetch(`${API_URL}/feedback`);
+                const items = await res.json();
+                display.innerHTML = items.length
+                    ? items.map(i => `<div class="card"><strong>${i.name}</strong> ${'⭐'.repeat(i.rating || 0)}<p>${i.message}</p></div>`).join('')
+                    : '<p>No feedback yet.</p>';
+            } catch (err) {
+                display.innerHTML = '<p>❌ Could not load feedback — is the API running?</p>';
+            }
+        }
+    </script>
+</body>
+</html>
